@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,15 +24,18 @@ public class AccountController {
     @GetMapping("/accounts")
     @CrossOrigin(origins = "*", maxAge = 3600)
 
-    public ResponseEntity<List<Account>> getAllAccounts(){
-        return ResponseEntity.ok(this.repository.findAll());
+    public HashSet<Account> getAllAccounts(){
+        return new HashSet<>(ResponseEntity.ok(this.repository.findAll()).getBody());
     }
-
 
     @GetMapping("/accountsEmails")
     @CrossOrigin(origins = "*", maxAge = 3600)
-    public List<String> getAllEmails(){
-        return ResponseEntity.ok(this.repository.findAll()).getBody().stream().map(acc->acc.getEmail()).collect(Collectors.toCollection(ArrayList::new));
+    public HashSet<String> getAllEmails(){
+        return ResponseEntity.ok(this.repository.findAll()).getBody().stream().map(acc->acc.getEmail()).collect(Collectors.toCollection(HashSet:: new));
+    }
+
+    public HashSet<String> getAllUserNames(){
+        return ResponseEntity.ok(this.repository.findAll()).getBody().stream().map(acc->acc.getUserName()).collect(Collectors.toCollection(HashSet:: new));
     }
 
     @DeleteMapping("/accounts")
@@ -42,16 +45,39 @@ public class AccountController {
 
     @PostMapping("/accounts")
     @CrossOrigin(origins = "*", maxAge = 3600)
-
-    public ResponseEntity<Account> createAccount(@RequestBody AccountRequest accountRequest){
-
-        ResponseEntity<List<Account>> existingAccounts = getAllAccounts();
-//        for(Account acc : existingAccounts.getBody()) {
-//            System.out.println(acc.getEmail());
-//        }
+    public ResponseEntity<String> registerAccount(@RequestBody Account accountRequest){
+        HashSet<String> existingEmails = getAllEmails();
+        HashSet<String> existingUserNames = getAllUserNames();
         Account account = new Account();
-        account.setEmail(accountRequest.getEmail());
-        account.setPassword(PasswordEncryptorDecryptor.encrypt(accountRequest.getPassword()));
-        return ResponseEntity.status(201).body(this.repository.save(account));
+        String email = accountRequest.getEmail();
+        String userName = accountRequest.getUserName();
+        String password = accountRequest.getPassword();
+        if(existingEmails.contains(email)) {
+            return ResponseEntity.ok().body("Email already used");
+        } else if(existingUserNames.contains(userName)){
+            return ResponseEntity.ok().body("Username already used");
+        } else {
+            account.setEmail(email);
+            account.setPassword(PasswordEncryptorDecryptor.encrypt(password));
+            account.setUserName(accountRequest.getUserName());
+            account.setRole(accountRequest.getRole());
+            this.repository.save(account);
+            return ResponseEntity.ok().body("User registered");
+        }
+    }
+
+    @GetMapping("/login")
+    @CrossOrigin(origins = "*", maxAge = 3600)
+    public ResponseEntity<String> logIn(@RequestBody Account accountRequest){
+        HashSet<Account> existingAccounts = getAllAccounts();
+        HashSet<String> existingEmails = getAllEmails();
+        String email = accountRequest.getEmail();
+        if(existingAccounts.contains(accountRequest)) {
+            return ResponseEntity.ok().body("User logged in successfuly");
+        } else if (!existingEmails.contains(email)){
+            return ResponseEntity.ok().body("There is no user associated with this email");
+        } else {
+            return ResponseEntity.ok().body("Wrong password");
+        }
     }
 }
