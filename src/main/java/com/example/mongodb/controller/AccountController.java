@@ -2,14 +2,12 @@ package com.example.mongodb.controller;
 
 import com.example.mongodb.encrypt_decrypt.PasswordEncryptorDecryptor;
 import com.example.mongodb.model.Account;
-import com.example.mongodb.repository.Repository;
-import com.example.mongodb.resource.AccountRequest;
+import com.example.mongodb.accountRepository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.stream.Collectors;
 
 
