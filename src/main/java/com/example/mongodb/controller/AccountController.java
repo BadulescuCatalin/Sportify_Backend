@@ -131,9 +131,10 @@ public class AccountController {
 
     @PostMapping("/login")
     @CrossOrigin(origins = "*", maxAge = 3600)
-    public ResponseEntity<String> logIn(@RequestBody Map<String, String> credentials){
+    public ResponseEntity<String> logIn(@RequestBody Map<String, String> credentials ){
         String email = credentials.get("email");
         String password = credentials.get("password");
+
         Account acc = findAccountWithEmail(email).getBody();
         if(acc == null) {
             return ResponseEntity.ok().body("Wrong credentials");
