@@ -9,6 +9,7 @@ public class PasswordEncryptorDecryptor {
 
     private static final String secretKey = "mySecretKey12345"; // 128 bit key
     private static final String initVector = "encryptionIntVec"; // 16 bytes IV
+    private static final String secretKeyForSigning = "D6C417240AF0429FA0DC45861F7A90B344BEEB2F3FA66328FF7B3AED0598E0D8"; // 128 bits key
 
     public static String encrypt(String password) {
         try {
@@ -40,6 +41,10 @@ public class PasswordEncryptorDecryptor {
             ex.printStackTrace();
         }
         return null;
+    }
+
+    public String getSecretKeyForSigning() {
+        return secretKeyForSigning;
     }
 
 }
