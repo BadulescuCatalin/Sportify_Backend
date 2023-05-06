@@ -4,6 +4,10 @@ import com.example.mongodb.encrypt_decrypt.PasswordEncryptorDecryptor;
 import com.example.mongodb.model.Account;
 import com.example.mongodb.repository.Repository;
 import com.mongodb.client.*;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -15,6 +19,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -121,19 +129,34 @@ public class AccountController {
         }
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     @CrossOrigin(origins = "*", maxAge = 3600)
     public ResponseEntity<String> logIn(@RequestBody Map<String, String> credentials){
         String email = credentials.get("email");
         String password = credentials.get("password");
         Account acc = findAccountWithEmail(email).getBody();
         if(acc == null) {
-            return ResponseEntity.ok().body("There is no user associated with this email");
+            return ResponseEntity.ok().body("Wrong credentials");
         } else {
             if(PasswordEncryptorDecryptor.encrypt(password).equals(acc.getPassword())) {
-                return new ResponseEntity<>("User logged in successfuly", HttpStatus.OK);
+                // Create the JWT token
+                Date expirationDate = new Date(System.currentTimeMillis() + 86400000); // 1 day in milliseconds
+
+                // Convert the key to bytes for signing
+                byte[] keyBytes = (new PasswordEncryptorDecryptor().getSecretKeyForSigning()).getBytes();
+                SecretKey secretKey = Keys.hmacShaKeyFor(keyBytes);
+
+                String token = Jwts.builder()
+                        .setSubject(email)
+                        .claim("owner/client", acc.getRole())
+                        .setExpiration(expirationDate)
+                        .signWith(secretKey, SignatureAlgorithm.HS256)
+                        .compact();
+
+                // Return the JWT token in the response
+                return ResponseEntity.ok().header("Authorization", "Bearer " + token).body("User logged in successfully");
             } else {
-                return ResponseEntity.ok().body("Wrong password");
+                return ResponseEntity.ok().body("Wrong credentials");
             }
         }
 //        HashSet<Account> existingAccounts = getAllAccounts();
