@@ -1,6 +1,6 @@
-package com.example.mongodb.FieldRepository;
+package com.example.mongodb.repository;
 
-import com.example.mongodb.Field.Field;
+import com.example.mongodb.model.Field;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,7 @@
-package com.example.mongodb.FieldController;
+package com.example.mongodb.controller;
 
-import com.example.mongodb.Field.Field;
-import com.example.mongodb.FieldRepository.FieldRepository;
+import com.example.mongodb.model.Field;
+import com.example.mongodb.repository.FieldRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
