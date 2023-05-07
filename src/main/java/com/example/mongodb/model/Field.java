@@ -1,5 +1,6 @@
 package com.example.mongodb.model;
 
+import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -7,96 +8,109 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Field {
     @Id
     private String id;
-    private Boolean Basketball;
-    private Boolean Football;
-    private Boolean Tenis;
-    private Boolean Handball;
-    private String location;
-    private Boolean night_lighting;
-    private Boolean synthetic;
-    private Boolean indoor_cover;
+    private String owner;
+    private String city;
+    private String address;
+    private String description;
+    private Integer price;
+    private Boolean basketball;
+    private Boolean football;
+    private Boolean tennis;
+    private Binary fileData;
+
 
     public Field() {}
 
-    public Field(String location, Boolean night_lighting, Boolean synthetic, Boolean Basketball, Boolean Football, Boolean Handball, Boolean Tenis, Boolean indoor_cover) {
-        this.Basketball = Basketball;
-        this.Football = Football;
-        this.Tenis = Tenis;
-        this.Handball = Handball;
-        this.location = location;
-        this.night_lighting = night_lighting;
-        this.synthetic = synthetic;
-        this.indoor_cover = indoor_cover;
+    public Field(String id, String owner, String city, String address, String description, Integer price, Boolean basketball, Boolean football, Boolean tennis) {
+        this.id = id;
+        this.owner = owner;
+        this.city = city;
+        this.address = address;
+        this.description = description;
+        this.price = price;
+        this.basketball = basketball;
+        this.football = football;
+        this.tennis = tennis;
     }
-
     // Getters and setters
+
     public String getId() {
         return id;
     }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public Boolean getBasketball() {
+        return basketball;
+    }
+
+    public Boolean getFootball() {
+        return football;
+    }
+
+    public Boolean getTennis() {
+        return tennis;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
 
-    public Boolean getBasketball() {
-        return Basketball;
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
     }
 
     public void setBasketball(Boolean basketball) {
-        Basketball = basketball;
-    }
-
-    public Boolean getFootball() {
-        return Football;
+        this.basketball = basketball;
     }
 
     public void setFootball(Boolean football) {
-        Football = football;
+        this.football = football;
     }
 
-    public Boolean getTenis() {
-        return Tenis;
+    public void setTennis(Boolean tennis) {
+        this.tennis = tennis;
     }
 
-    public void setTenis(Boolean tenis) {
-        Tenis = tenis;
+    public Binary getFileData() {
+        return fileData;
     }
 
-    public Boolean getHandball() {
-        return Handball;
+    public void setFileData(Binary fileData) {
+        this.fileData = fileData;
     }
 
-    public void setHandball(Boolean handball) {
-        Handball = handball;
+    public String getCity() {
+        return city;
     }
 
-    public Boolean getindoor_cover() {
-        return indoor_cover;
-    }
-
-    public void setindoor_cover(Boolean indoor_cover) {
-        this.indoor_cover = indoor_cover;
-    }
-
-    public void setnight_lighting(Boolean night_lighting) {
-        this.night_lighting = night_lighting;
-    }
-
-    public Boolean getnight_lighting() {
-        return night_lighting;
-    }
-
-    public void setsynthetic(Boolean synthetic) {
-        this.synthetic = synthetic;
-    }
-
-    public Boolean getsynthetic() {
-        return synthetic;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-    public void setLocation(String location) {
-        this.location = location;
+    public void setCity(String city) {
+        this.city = city;
     }
 }
