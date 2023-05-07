@@ -29,6 +29,7 @@ public class FieldController {
 
 
     @GetMapping("/fields")
+    @CrossOrigin(origins = "*", maxAge = 3600)
     public ResponseEntity<List<Field>> getAllFields() {
         List<Field> fields = fieldRepository.findAllWithoutFileData();
         return ResponseEntity.ok().body(fields);
@@ -41,6 +42,7 @@ public class FieldController {
     // La asta trebuie facut requestul altfel
     // TODO: de fandit cum facem verificare teren unic
     @PostMapping("/fields")
+    @CrossOrigin(origins = "*", maxAge = 3600)
     public ResponseEntity<String> createField(
             @RequestParam("owner") String owner, @RequestParam("city") String city,
             @RequestParam("address") String address, @RequestParam("description") String description,
@@ -69,6 +71,7 @@ public class FieldController {
 
     // de facut altfel de request
     @PutMapping("/fields")
+    @CrossOrigin(origins = "*", maxAge = 3600)
     public Field updateFieldById(
             @RequestParam("id") String id, @RequestParam(value = "city", required = false) String city,
             @RequestParam(value = "address", required = false) String address,
@@ -107,6 +110,7 @@ public class FieldController {
     }
 
     @DeleteMapping("/fields")
+    @CrossOrigin(origins = "*", maxAge = 3600)
     public String deleteFieldById(@RequestBody Map<String, String> request) {
         String id = request.get("id");
         fieldRepository.deleteById(id);
@@ -115,6 +119,7 @@ public class FieldController {
 
 
     @GetMapping("/sport/{sport}")
+    @CrossOrigin(origins = "*", maxAge = 3600)
     public List<Field> getFieldsBySport(@PathVariable String sport) {
         switch(sport.toLowerCase()) {
             case "basketball":
@@ -140,11 +145,13 @@ public class FieldController {
 //    }
 
     @GetMapping("/city/{city}")
+    @CrossOrigin(origins = "*", maxAge = 3600)
     public List<Field> getFieldsByCity(@PathVariable String city) {
         return fieldRepository.findByCity(city);
     }
 
     @GetMapping("/city/sorted/{sortOrder}")
+    @CrossOrigin(origins = "*", maxAge = 3600)
     public List<Field> getFieldsSortedByCity(@PathVariable String sortOrder) {
         Sort sort;
         if (sortOrder.equalsIgnoreCase("desc")) {
@@ -156,6 +163,7 @@ public class FieldController {
     }
 
     @GetMapping("/price/{sortOrder}")
+    @CrossOrigin(origins = "*", maxAge = 3600)
     public List<Field> getFieldsByPrice(@PathVariable String sortOrder) {
         Sort sort;
         if (sortOrder.equalsIgnoreCase("desc")) {
