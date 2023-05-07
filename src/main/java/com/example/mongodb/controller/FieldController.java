@@ -120,7 +120,7 @@ public class FieldController {
                 return fieldRepository.findByBasketballTrue();
             case "football":
                 return fieldRepository.findByFootballTrue();
-            case "tenis":
+            case "tennis":
                 return fieldRepository.findByTennisTrue();
             default:
                 return null;
@@ -131,5 +131,6 @@ public class FieldController {
     // TODO: de sortat dupa sporturi si de filtrat dupa sporturi
     // TODO: de sortat dupa pret
     // TODO: de sortat dupa oras si de filtrat dupa oras
+
 
 }
