@@ -1,6 +1,7 @@
 package com.example.mongodb.repository;
 
 import com.example.mongodb.model.Field;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -20,6 +21,13 @@ public interface FieldRepository extends MongoRepository<Field, String> {
 
     List<Field> findByTennisTrue();
 
+    //List<Field> findAllByOrderBySport();
+
+    List<Field> findByCity(String city);
+
+    // List<Field> findAllByOrderByCity(String sortOrder);
+
+    List<Field> findByPrice(Sort sort);
 
 }
 

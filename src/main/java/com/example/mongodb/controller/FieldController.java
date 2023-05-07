@@ -7,6 +7,7 @@ import com.example.mongodb.repository.FieldRepository;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.ResponseEntity;
@@ -120,12 +121,53 @@ public class FieldController {
                 return fieldRepository.findByBasketballTrue();
             case "football":
                 return fieldRepository.findByFootballTrue();
-            case "tenis":
+            case "tennis":
                 return fieldRepository.findByTennisTrue();
             default:
                 return null;
         }
     }
+
+//    @GetMapping("/sport/sorted/{sortOrder}")
+//    public List<Field> getFieldsSortedBySport(@PathVariable String sortOrder) {
+//        Sort sort;
+//        if (sortOrder.equalsIgnoreCase("desc")) {
+//            sort = Sort.by(Sort.Direction.DESC, "sport");
+//        } else {
+//            sort = Sort.by(Sort.Direction.ASC, "sport");
+//        }
+//        return fieldRepository.findAll(sort);
+//    }
+
+    @GetMapping("/city/{city}")
+    public List<Field> getFieldsByCity(@PathVariable String city) {
+        return fieldRepository.findByCity(city);
+    }
+
+    @GetMapping("/city/sorted/{sortOrder}")
+    public List<Field> getFieldsSortedByCity(@PathVariable String sortOrder) {
+        Sort sort;
+        if (sortOrder.equalsIgnoreCase("desc")) {
+            sort = Sort.by(Sort.Direction.DESC, "city");
+        } else {
+            sort = Sort.by(Sort.Direction.ASC, "city");
+        }
+        return fieldRepository.findAll(sort);
+    }
+
+    @GetMapping("/price/{sortOrder}")
+    public List<Field> getFieldsByPrice(@PathVariable String sortOrder) {
+        Sort sort;
+        if (sortOrder.equalsIgnoreCase("desc")) {
+            sort = Sort.by(Sort.Direction.DESC, "price");
+        } else {
+            sort = Sort.by(Sort.Direction.ASC, "price");
+        }
+        return fieldRepository.findAll(sort);
+    }
+
+
+
 
     // TODO: sa ma gandesc daca ar trebui sa mai pun pe undeva path variable cum e aici la sporturi!!!!!!!
     // TODO: de sortat dupa sporturi si de filtrat dupa sporturi
