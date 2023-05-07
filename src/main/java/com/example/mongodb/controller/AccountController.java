@@ -155,7 +155,7 @@ public class AccountController {
                         .compact();
 
                 // Return the JWT token in the response
-                return ResponseEntity.ok().header("Authorization", "Bearer " + token).body("User logged in successfully");
+                return ResponseEntity.ok().header("Authorization", "Bearer " + token).body(token);
             } else {
                 return ResponseEntity.ok().body("Wrong credentials");
             }
