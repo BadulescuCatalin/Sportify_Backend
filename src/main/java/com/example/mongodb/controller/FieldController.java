@@ -113,6 +113,11 @@ public class FieldController {
         return "Field with id " + id + " has been deleted!";
     }
 
+    @GetMapping("/owner/{owner}")
+    public List<Field> getFieldsByOwner(@PathVariable String owner) {
+        return fieldRepository.findByOwner(owner);
+    }
+
 
     @GetMapping("/sport/{sport}")
     public List<Field> getFieldsBySport(@PathVariable String sport) {
