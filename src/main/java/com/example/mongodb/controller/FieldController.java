@@ -3,6 +3,7 @@ package com.example.mongodb.controller;
 import com.example.mongodb.Services.DocumentService;
 import com.example.mongodb.Services.EmailService;
 import com.example.mongodb.model.Field;
+import com.example.mongodb.model.Field2;
 import com.example.mongodb.repository.FieldRepository;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
@@ -43,29 +44,24 @@ public class FieldController {
     // TODO: de fandit cum facem verificare teren unic
     @PostMapping("/fields")
     @CrossOrigin(origins = "*", maxAge = 3600)
-    public ResponseEntity<String> createField(
-            @RequestParam("owner") String owner, @RequestParam("city") String city,
-            @RequestParam("address") String address, @RequestParam("description") String description,
-            @RequestParam("price") Integer price, @RequestParam("basketball") Boolean basketball,
-            @RequestParam("football") Boolean football, @RequestParam("tennis") Boolean tennis,
-            @RequestParam("fileData") MultipartFile fileData) throws IOException {
+    public ResponseEntity<String> createField(@RequestBody Field2 f) throws IOException {
 
 
 
 
         Field field = new Field();
-        field.setOwner(owner);
-        field.setCity(city);
-        field.setAddress(address);
-        field.setDescription(description);
-        field.setPrice(price);
-        field.setBasketball(basketball);
-        field.setTennis(tennis);
-        field.setFootball(football);
-        field.setFileData(new Binary(BsonBinarySubType.BINARY, fileData.getBytes()));
+        field.setOwner(f.getOwner());
+        field.setCity(f.getCity());
+        field.setAddress(f.getAddress());
+        field.setDescription(f.getDescription());
+        field.setPrice(f.getPrice());
+        field.setBasketball(f.getBasketball());
+        field.setTennis(f.getTennis());
+        field.setFootball(f.getFootball());
+        //field.setFileData(new Binary(BsonBinarySubType.BINARY, f.getFileData().getBytes()));
         fieldRepository.save(field);
         emailService.sendMailWithAttachment("badulescucatalin01@gmail.com", "Please verify this ownership proof",
-                "The owner with the username: " + owner + " wants to verify his ownership proof", field.getFileData().getData(), owner + "'s proof");
+                "The owner with the username: " + f.getOwner() + " wants to verify his ownership proof", field.getFileData().getData(), f.getOwner() + "'s proof");
         return ResponseEntity.ok().body("Field added");
     }
 
@@ -118,6 +114,7 @@ public class FieldController {
     }
 
     @GetMapping("/owner/{owner}")
+    @CrossOrigin(origins = "*", maxAge = 3600)
     public List<Field> getFieldsByOwner(@PathVariable String owner) {
         return fieldRepository.findByOwner(owner);
     }
