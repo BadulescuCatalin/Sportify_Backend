@@ -16,12 +16,12 @@ public class Field2 {
     private Boolean basketball;
     private Boolean football;
     private Boolean tennis;
-    //private MultipartFile fileData;
+    private MultipartFile fileData;
 
 
     public Field2() {}
 
-    public Field2(String id, String owner, String city, String address, String description, Integer price, Boolean basketball, Boolean football, Boolean tennis/*, MultipartFile fileData*/) {
+    public Field2(String id, String owner, String city, String address, String description, Integer price, Boolean basketball, Boolean football, Boolean tennis, MultipartFile fileData) {
         this.owner = owner;
         this.city = city;
         this.address = address;
@@ -30,7 +30,7 @@ public class Field2 {
         this.basketball = basketball;
         this.football = football;
         this.tennis = tennis;
-        //this.fileData = fileData;
+        this.fileData = fileData;
     }
     // Getters and setters
 
@@ -92,13 +92,13 @@ public class Field2 {
         this.tennis = tennis;
     }
 
-//    //public MultipartFile getFileData() {
-//        return fileData;
-//    }
+    public MultipartFile getFileData() {
+        return fileData;
+    }
 
-//    //public void setFileData(MultipartFile fileData) {
-//        this.fileData = fileData;
-//    }
+    public void setFileData(MultipartFile fileData) {
+        this.fileData = fileData;
+    }
 
     public String getCity() {
         return city;

@@ -44,24 +44,31 @@ public class FieldController {
     // TODO: de fandit cum facem verificare teren unic
     @PostMapping("/fields")
     @CrossOrigin(origins = "*", maxAge = 3600)
-    public ResponseEntity<String> createField(@RequestBody Field2 f) throws IOException {
+    public ResponseEntity<String> createField(@RequestParam(value = "owner") String owner, @RequestParam(value = "city") String city,
+                                              @RequestParam(value = "address") String address,
+                                              @RequestParam(value = "description") String description,
+                                              @RequestParam(value = "price") Integer price,
+                                              @RequestParam(value = "basketball") Boolean basketball,
+                                              @RequestParam(value = "football") Boolean football,
+                                              @RequestParam(value = "tennis") Boolean tennis,
+                                              @RequestParam(value = "fileData") MultipartFile fileData) throws IOException {
 
 
 
 
         Field field = new Field();
-        field.setOwner(f.getOwner());
-        field.setCity(f.getCity());
-        field.setAddress(f.getAddress());
-        field.setDescription(f.getDescription());
-        field.setPrice(f.getPrice());
-        field.setBasketball(f.getBasketball());
-        field.setTennis(f.getTennis());
-        field.setFootball(f.getFootball());
-        //field.setFileData(new Binary(BsonBinarySubType.BINARY, f.getFileData().getBytes()));
+        field.setOwner(owner);
+        field.setCity(city);
+        field.setAddress(address);
+        field.setDescription(description);
+        field.setPrice(price);
+        field.setBasketball(basketball);
+        field.setTennis(tennis);
+        field.setFootball(football);
+        field.setFileData(new Binary(BsonBinarySubType.BINARY, fileData.getBytes()));
         fieldRepository.save(field);
         emailService.sendMailWithAttachment("badulescucatalin01@gmail.com", "Please verify this ownership proof",
-                "The owner with the username: " + f.getOwner() + " wants to verify his ownership proof", field.getFileData().getData(), f.getOwner() + "'s proof");
+                "The owner with the username: " + owner + " wants to verify his ownership proof", field.getFileData().getData(), owner + "'s proof");
         return ResponseEntity.ok().body("Field added");
     }
 
