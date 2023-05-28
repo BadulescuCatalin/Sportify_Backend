@@ -3,11 +3,11 @@ package com.example.mongodb.model;
 import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.web.multipart.MultipartFile;
 
-@Document(collection = "fields")
-public class Field {
-    @Id
-    private String id;
+
+public class Field2 {
+
     private String owner;
     private String city;
     private String address;
@@ -16,13 +16,12 @@ public class Field {
     private Boolean basketball;
     private Boolean football;
     private Boolean tennis;
-    private Binary fileData;
+    private MultipartFile fileData;
 
 
-    public Field() {}
+    public Field2() {}
 
-    public Field(String id, String owner, String city, String address, String description, Integer price, Boolean basketball, Boolean football, Boolean tennis) {
-        this.id = id;
+    public Field2(String id, String owner, String city, String address, String description, Integer price, Boolean basketball, Boolean football, Boolean tennis, MultipartFile fileData) {
         this.owner = owner;
         this.city = city;
         this.address = address;
@@ -31,12 +30,10 @@ public class Field {
         this.basketball = basketball;
         this.football = football;
         this.tennis = tennis;
+        this.fileData = fileData;
     }
     // Getters and setters
 
-    public String getId() {
-        return id;
-    }
 
     public String getOwner() {
         return owner;
@@ -66,9 +63,6 @@ public class Field {
         return tennis;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public void setOwner(String owner) {
         this.owner = owner;
@@ -98,11 +92,11 @@ public class Field {
         this.tennis = tennis;
     }
 
-    public Binary getFileData() {
+    public MultipartFile getFileData() {
         return fileData;
     }
 
-    public void setFileData(Binary fileData) {
+    public void setFileData(MultipartFile fileData) {
         this.fileData = fileData;
     }
 
@@ -113,5 +107,4 @@ public class Field {
     public void setCity(String city) {
         this.city = city;
     }
-
 }
