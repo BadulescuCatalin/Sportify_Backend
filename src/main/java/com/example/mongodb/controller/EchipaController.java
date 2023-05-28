@@ -49,7 +49,7 @@ public class EchipaController {
 
     //TODO: intrare in echipa ca membru singur sau ca si capitan alta echipa. Daca e full nu pot intra sau daca devine full nu mai e accesibila la altii
     // + TOKEN
-    @PutMapping("/echipe/{id}")
+    @PutMapping("/echipe/add/{id}")
     @CrossOrigin(origins = "*", maxAge = 3600)
     public ResponseEntity<String> adaugaMembri(@PathVariable String id,
                                                @RequestParam(value = "nrMembri") int nrMembri,
@@ -70,4 +70,18 @@ public class EchipaController {
         return ResponseEntity.ok().body("adaugat");
     }
     //TODO: sa pot sa ma dezinscriu de la echipa singur sau cu toata echipa daca eram capitan
+    @PutMapping("/echipe/remove/{id}")
+    @CrossOrigin(origins = "*", maxAge = 3600)
+    public ResponseEntity<String> removeMembri(@PathVariable String id,
+                                               @RequestParam(value = "email") String email
+    ) {
+        String emailTemp = email.replaceAll("\\.", ",");
+        Echipa echipa = echipaRepository.findAllById(id);
+        int nrMemb = echipa.getEmailuriParticipant().get(emailTemp);
+        // de trimis email la amandoi
+        echipa.getEmailuriParticipant().remove(emailTemp);
+        echipa.setNrMembriActuali(echipa.getNrMembriActuali() - nrMemb);
+        echipaRepository.save(echipa);
+        return ResponseEntity.ok().body("substras");
+    }
 }
