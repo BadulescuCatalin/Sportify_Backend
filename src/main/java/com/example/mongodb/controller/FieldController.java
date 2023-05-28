@@ -109,6 +109,7 @@ public class FieldController {
     @DeleteMapping("/fields")
     public String deleteFieldById(@RequestBody Map<String, String> request) {
         String id = request.get("id");
+        //fieldRepository.deleteById(id);
         fieldRepository.deleteById(id);
         return "Field with id " + id + " has been deleted!";
     }
