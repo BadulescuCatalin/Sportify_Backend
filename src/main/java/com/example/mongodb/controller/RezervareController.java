@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,6 +21,32 @@ public class RezervareController {
     RezervareRepository rezervareRepository;
     @Autowired
     RezervareTerenRepository rezervareTerenRepository;
+
+    // iau toaterezervarile pt un teren
+    @PostMapping("/rezervariTeren/{idTeren}")
+    @CrossOrigin(origins = "*", maxAge = 3600)
+    public List<Integer> getAllRezervareTeren(@PathVariable String idTeren,
+                                              @RequestParam String data) {
+        RezervareTeren rezervareTeren = rezervareTerenRepository.findByIdTeren(idTeren);
+        HashMap<String, HashMap<Integer, Boolean>> date = rezervareTeren.getIntervale();
+        if(!date.containsKey(data)) {
+            HashMap<Integer, Boolean> map = new HashMap<Integer, Boolean>();
+            for(int i=0; i<24; ++i) {
+                map.put(i, false);
+            }
+            rezervareTeren.getIntervale().put(data, map);
+            rezervareTerenRepository.save(rezervareTeren);
+        }
+        List<Integer> list = new ArrayList<>();
+        HashMap<Integer, Boolean> map = rezervareTeren.getIntervale().get(data);
+        for(int i=0; i<24; ++i) {
+            if(!map.get(i)) {
+                list.add(i);
+            }
+        }
+        return list;
+    }
+
 
     // iau toate rezervarile
     @GetMapping("/rezervari")
