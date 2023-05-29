@@ -1,15 +1,22 @@
 package com.example.mongodb.controller;
 
 
+import com.example.mongodb.model.Account;
 import com.example.mongodb.model.Field;
 import com.example.mongodb.model.Rezervare;
 import com.example.mongodb.model.RezervareTeren;
+import com.example.mongodb.repository.FieldRepository;
+import com.example.mongodb.repository.Repository;
 import com.example.mongodb.repository.RezervareRepository;
 import com.example.mongodb.repository.RezervareTerenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,6 +27,46 @@ public class RezervareController {
     RezervareRepository rezervareRepository;
     @Autowired
     RezervareTerenRepository rezervareTerenRepository;
+    @Autowired
+    Repository repository;
+    @Autowired
+    FieldRepository fieldRepository;
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    // iau toaterezervarile pt un teren
+    @GetMapping("/rezervariTeren/{idTeren}/{data}")
+    @CrossOrigin(origins = "*", maxAge = 3600)
+    public List<Integer> getAllRezervareTeren(@PathVariable String idTeren,
+                                              @PathVariable String data) {
+        RezervareTeren rezervareTeren = rezervareTerenRepository.findByIdTeren(idTeren);
+        if ( rezervareTeren == null)
+        {
+            List<Integer> list = new ArrayList<>();
+            for(int i=0; i<24; ++i) {
+                    list.add(i);
+            }
+            return list;
+        }
+        HashMap<String, HashMap<Integer, Boolean>> date = rezervareTeren.getIntervale();
+        if(!date.containsKey(data)) {
+            HashMap<Integer, Boolean> map = new HashMap<Integer, Boolean>();
+            for(int i=0; i<24; ++i) {
+                map.put(i, false);
+            }
+            rezervareTeren.getIntervale().put(data, map);
+            rezervareTerenRepository.save(rezervareTeren);
+        }
+        List<Integer> list = new ArrayList<>();
+        HashMap<Integer, Boolean> map = rezervareTeren.getIntervale().get(data);
+        for(int i=0; i<24; ++i) {
+            if(!map.get(i)) {
+                list.add(i);
+            }
+        }
+        return list;
+    }
+
 
     // iau toate rezervarile
     @GetMapping("/rezervari")
@@ -51,10 +98,14 @@ public class RezervareController {
     public ResponseEntity<Rezervare> postRezervare(
                                                          @RequestParam(value = "idTeren") String idTeren,
                                                          @RequestParam(value = "emailClient") String emailClient,
-                                                         @RequestParam(value = "emailOwner") String emailOwner,
-                                                         @RequestParam(value = "interval") String interval,
+                                                         @RequestParam(value = "interval") List<Integer> interval,
                                                          @RequestParam(value = "data") String data
                                                          ) {
+        Field field = fieldRepository.findById(idTeren).orElse(null);
+        String userName = field.getOwner();
+        Query query = new Query().addCriteria(Criteria.where("userName").is(userName));
+        Account acc = mongoTemplate.findOne(query, Account.class);
+        String emailOwner = acc.getEmail();
         Rezervare rezervare = new Rezervare(idTeren, emailClient, emailOwner, interval, data);
         rezervareRepository.save(rezervare);
         // plus de trimis email
@@ -71,7 +122,7 @@ public class RezervareController {
             @RequestParam(value = "idTeren") String idTeren,
             @RequestParam(value = "emailClient") String emailClient,
             @RequestParam(value = "emailOwner") String emailOwner,
-            @RequestParam(value = "interval") String interval,
+            @RequestParam(value = "interval") List<Integer> interval,
             @RequestParam(value = "data") String data
     ) {
         rezervareRepository.delete(rezervareRepository.findAllById(id));
@@ -86,7 +137,7 @@ public class RezervareController {
     @CrossOrigin(origins = "*", maxAge = 3600)
     public RezervareTeren postRezervareTeren(
             @RequestParam(value = "idTeren") String idTeren,
-            @RequestParam(value = "interval") String interval,
+            @RequestParam(value = "interval") List<Integer> interval,
             @RequestParam(value = "data") String data,
             @PathVariable String action
     ) {
@@ -99,9 +150,7 @@ public class RezervareController {
             rezervareTeren.setId(idTeren);
             HashMap<String, HashMap<Integer, Boolean>> date = rezervareTeren.getIntervale();
             if(date.containsKey(data)) {
-                int start = Integer.parseInt(interval.split("-")[0]);
-                int stop = Integer.parseInt(interval.split("-")[1]);
-                for(int i = start; i < stop; ++i) {
+                for(int i : interval) {
                     rezervareTeren.getIntervale().get(data).put(i, val);
                 }
             } else {
@@ -110,9 +159,7 @@ public class RezervareController {
                     map.put(i, false);
                 }
                 rezervareTeren.getIntervale().put(data, map);
-                int start = Integer.parseInt(interval.split("-")[0]);
-                int stop = Integer.parseInt(interval.split("-")[1]);
-                for(int i = start; i < stop; ++i) {
+                for(int i : interval) {
                     rezervareTeren.getIntervale().get(data).put(i, val);
                 }
             }
@@ -125,9 +172,7 @@ public class RezervareController {
                 map.put(i, false);
             }
             rezervareTeren.getIntervale().put(data, map);
-            int start = Integer.parseInt(interval.split("-")[0]);
-            int stop = Integer.parseInt(interval.split("-")[1]);
-            for(int i = start; i < stop; ++i) {
+            for(int i : interval) {
                 rezervareTeren.getIntervale().get(data).put(i, val);
             }
         }

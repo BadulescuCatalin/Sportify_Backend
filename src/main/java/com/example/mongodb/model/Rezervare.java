@@ -1,9 +1,12 @@
 package com.example.mongodb.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.models.auth.In;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.*;
 
 @Data
 @Document(collection = "rezervari")
@@ -14,10 +17,10 @@ public class Rezervare {
     String idTeren;
     String emailClient;
     String emailOwner;
-    String interval;
+    List<Integer> interval;
     String data;
 
-    public Rezervare(String idTeren, String emailClient, String emailOwner, String interval, String data) {
+    public Rezervare(String idTeren, String emailClient, String emailOwner, List<Integer> interval, String data) {
         this.idTeren = idTeren;
         this.emailClient = emailClient;
         this.emailOwner = emailOwner;
@@ -49,7 +52,7 @@ public class Rezervare {
         return emailOwner;
     }
 
-    public String getInterval() {
+    public List<Integer> getInterval() {
         return interval;
     }
 
@@ -69,7 +72,7 @@ public class Rezervare {
         this.emailOwner = emailOwner;
     }
 
-    public void setInterval(String interval) {
+    public void setInterval(List<Integer> interval) {
         this.interval = interval;
     }
 }

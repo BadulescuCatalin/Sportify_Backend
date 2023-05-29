@@ -30,6 +30,7 @@ public interface FieldRepository extends MongoRepository<Field, String> {
     List<Field> findByPrice(Sort sort);
 
     List<Field> findByOwner(String owner);
+
 }
 
 
