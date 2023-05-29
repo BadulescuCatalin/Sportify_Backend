@@ -1,0 +1,26 @@
+.texte-container {
+  width: 30%;
+
+  background-color: rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  border-radius: 24px;
+  padding: 16px;
+
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.textMare {
+  font-size: xx-large;
+  text-align: center;
+  font-weight: bold;
+  padding-bottom: 32px;
+}
+
+.textMic {
+  font-size: medium;
+  text-align: center;
+  padding-bottom: 32px;
+}

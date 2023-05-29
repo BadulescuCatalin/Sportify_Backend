@@ -1,0 +1,21 @@
+.main-container {
+  background: linear-gradient(to top, #756d6d, #fbfbfb);
+
+  min-height: fit-content;
+  height: 120vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  margin-top: 80px;
+}
+
+.section-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  margin-bottom: 2%;
+  width: 100%;
+  height: fit-content;
+}
