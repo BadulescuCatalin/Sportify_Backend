@@ -47,6 +47,13 @@ public class FieldController {
         return ResponseEntity.ok().body(fields);
     }
 
+    @GetMapping("/fields2")
+    @CrossOrigin(origins = "*", maxAge = 3600)
+    public ResponseEntity<List<Field>> getAllFields2() {
+        List<Field> fields = fieldRepository.findAll();
+        return ResponseEntity.ok().body(fields);
+    }
+
     @GetMapping("/id/{id}")
     @CrossOrigin(origins = "*", maxAge = 3600)
     public Field getFieldById(@PathVariable String id) {
