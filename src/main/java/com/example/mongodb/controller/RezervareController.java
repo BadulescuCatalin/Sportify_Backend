@@ -1,6 +1,7 @@
 package com.example.mongodb.controller;
 
 
+import com.example.mongodb.Services.EmailService;
 import com.example.mongodb.model.Field;
 import com.example.mongodb.model.Rezervare;
 import com.example.mongodb.model.RezervareTeren;
@@ -58,6 +59,10 @@ public class RezervareController {
         Rezervare rezervare = new Rezervare(idTeren, emailClient, emailOwner, interval, data);
         rezervareRepository.save(rezervare);
         // plus de trimis email
+
+        EmailService ceva = new EmailService();
+        ceva.sendMailWithAttachment2(emailClient, "Sportify: rezervare","Ai facut o rezervare pentru data de" + data + " la orele " + interval);
+        ceva.sendMailWithAttachment2(emailOwner, "Sportify: teren inchiriat", "Terenul cu id-ul " + idTeren + " a fost inchiriat in data de " + data + " intre orele " + interval);
         return ResponseEntity.ok().body(rezervare);
 
     }

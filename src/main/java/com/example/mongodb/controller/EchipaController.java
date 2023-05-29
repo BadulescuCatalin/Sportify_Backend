@@ -44,7 +44,7 @@ public class EchipaController {
     @CrossOrigin(origins = "*", maxAge = 3600)
     public ResponseEntity<String> stergeEchipa(@RequestParam(value = "id") String id) {
         echipaRepository.delete(echipaRepository.findAllById(id));
-        return ResponseEntity.ok().body("echipa stersa");
+        return ResponseEntity.ok().body("echipa stearsa");
     }
 
     //TODO: intrare in echipa ca membru singur sau ca si capitan alta echipa. Daca e full nu pot intra sau daca devine full nu mai e accesibila la altii
