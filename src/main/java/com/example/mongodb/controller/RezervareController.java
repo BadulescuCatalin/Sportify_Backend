@@ -23,11 +23,19 @@ public class RezervareController {
     RezervareTerenRepository rezervareTerenRepository;
 
     // iau toaterezervarile pt un teren
-    @PostMapping("/rezervariTeren/{idTeren}")
+    @GetMapping("/rezervariTeren/{idTeren}/{data}")
     @CrossOrigin(origins = "*", maxAge = 3600)
     public List<Integer> getAllRezervareTeren(@PathVariable String idTeren,
-                                              @RequestParam String data) {
+                                              @PathVariable String data) {
         RezervareTeren rezervareTeren = rezervareTerenRepository.findByIdTeren(idTeren);
+        if ( rezervareTeren == null)
+        {
+            List<Integer> list = new ArrayList<>();
+            for(int i=0; i<24; ++i) {
+                    list.add(i);
+            }
+            return list;
+        }
         HashMap<String, HashMap<Integer, Boolean>> date = rezervareTeren.getIntervale();
         if(!date.containsKey(data)) {
             HashMap<Integer, Boolean> map = new HashMap<Integer, Boolean>();
