@@ -77,6 +77,10 @@ public class EchipaController {
     ) {
         String emailTemp = email.replaceAll("\\.", ",");
         Echipa echipa = echipaRepository.findAllById(id);
+        if(email.equals(echipa.getEmailCapitan())) {
+            echipaRepository.delete(echipa);
+            return ResponseEntity.ok().body("echipa stearsa");
+        }
         int nrMemb = echipa.getEmailuriParticipant().get(emailTemp);
         // de trimis email la amandoi
         echipa.getEmailuriParticipant().remove(emailTemp);
