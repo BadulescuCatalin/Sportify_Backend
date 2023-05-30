@@ -1,13 +1,20 @@
 package com.example.mongodb.controller;
 
+import com.example.mongodb.encrypt_decrypt.PasswordEncryptorDecryptor;
 import com.example.mongodb.model.Echipa;
 import com.example.mongodb.model.Rezervare;
 import com.example.mongodb.repository.EchipaRepository;
 import com.example.mongodb.repository.RezervareRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import io.swagger.annotations.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.SecretKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,16 +34,37 @@ public class EchipaController {
 
     @PostMapping("/echipe")
     @CrossOrigin(origins = "*", maxAge = 3600)
-    public ResponseEntity<Echipa> adaugaEchipa(@RequestParam(value = "numeEchipa") String numeEchipa,
+    public ResponseEntity<Echipa> adaugaEchipa(@RequestHeader("Authorization") String token,
+                                               @RequestParam(value = "numeEchipa") String numeEchipa,
                                                @RequestParam(value = "descriereEchipa") String descriereEcipa,
                                                @RequestParam(value = "nrMembriActuali") int nrMembriActuali,
                                                @RequestParam(value = "numarMembriDoriti") int numarMembriDoriti,
                                                @RequestParam(value = "emailCapitan") String emailCapitan) {
-        Echipa echipa = new Echipa(numeEchipa, descriereEcipa, nrMembriActuali, numarMembriDoriti, emailCapitan);
-        echipaRepository.save(echipa);
-        return ResponseEntity.ok().body(echipa);
-    }
+        try {
+            byte[] keyBytes = (new PasswordEncryptorDecryptor().getSecretKeyForSigning()).getBytes();
+            SecretKey secretKey = Keys.hmacShaKeyFor(keyBytes);
+            Claims claims = Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(token)
+                    .getBody();
 
+            // Extract the subject (email) from the claims
+            String role = claims.get("role", String.class);
+            if (role.equals("owner") || role.equals("client")) {
+                Echipa echipa = new Echipa(numeEchipa, descriereEcipa, nrMembriActuali, numarMembriDoriti, emailCapitan);
+                echipaRepository.save(echipa);
+                return ResponseEntity.ok().body(echipa);
+            } else {
+                return ResponseEntity.ok().body(null);
+            }
+
+        } catch (JwtException e) {
+            System.out.println(e);
+            // Invalid token or signature verification failed
+            // Handle the exception appropriately
+            return ResponseEntity.ok().body(null);
+        }
+    }
 
     //TODO: sterge echipa ca si capitan + token si email
 
