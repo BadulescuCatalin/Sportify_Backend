@@ -1,6 +1,7 @@
 package com.example.mongodb.controller;
 
 
+import com.example.mongodb.Services.EmailService;
 import com.example.mongodb.model.Account;
 import com.example.mongodb.model.Field;
 import com.example.mongodb.model.Rezervare;
@@ -23,6 +24,37 @@ import java.util.List;
 @RestController
 
 public class RezervareController {
+
+    public static List<Integer> insertElementPlusOne(List<Integer> list) {
+        List<Integer> resultList = new ArrayList<>();
+
+        for (Integer element : list) {
+            resultList.add(element);
+            resultList.add(element + 1);
+        }
+
+        return resultList;
+    }
+
+    public static String convertListToString(List<Integer> list) {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < list.size(); i++) {
+            sb.append(list.get(i));
+
+            if (i % 2 == 0 && i + 1 < list.size()) {
+                sb.append("-");
+            } else if (i + 1 < list.size()) {
+                sb.append(", ");
+            }
+        }
+
+        return sb.toString();
+    }
+
+    @Autowired
+    private EmailService ceva;
+
     @Autowired
     RezervareRepository rezervareRepository;
     @Autowired
@@ -109,6 +141,13 @@ public class RezervareController {
         Rezervare rezervare = new Rezervare(idTeren, emailClient, emailOwner, interval, data);
         rezervareRepository.save(rezervare);
         // plus de trimis email
+
+        List<Integer> resultList = insertElementPlusOne(interval);
+        String result = convertListToString(resultList);
+
+        ceva.sendMailWithAttachment2(emailClient, "Sportify: Rezervare","Ai facut o rezervare pentru data de" + data + " la orele " + result + ".");
+        ceva.sendMailWithAttachment2(emailOwner, "Sportify: Teren inchiriat", "Teren inchiriat in data de " + data + " intre orele " + result + ".");
+
         return ResponseEntity.ok().body(rezervare);
 
     }
