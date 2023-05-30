@@ -1,5 +1,6 @@
 package com.example.mongodb.controller;
 
+import com.example.mongodb.Services.EmailService;
 import com.example.mongodb.encrypt_decrypt.PasswordEncryptorDecryptor;
 import com.example.mongodb.model.Echipa;
 import com.example.mongodb.model.Rezervare;
@@ -16,10 +17,15 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.SecretKey;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
 public class EchipaController {
+
+    @Autowired
+    private EmailService ceva;
+
     // La toate de verificat token!!!!!!
     @Autowired
     EchipaRepository echipaRepository;
@@ -62,6 +68,8 @@ public class EchipaController {
             System.out.println(e);
             // Invalid token or signature verification failed
             // Handle the exception appropriately
+
+            ceva.sendMailWithAttachment2(emailCapitan, "Sportify: Ati adaugat o echipa","Echipa " + numeEchipa + " a fost adaugata cu succes!");
             return ResponseEntity.ok().body(null);
         }
     }
@@ -71,7 +79,17 @@ public class EchipaController {
     @DeleteMapping("/echipe")
     @CrossOrigin(origins = "*", maxAge = 3600)
     public ResponseEntity<String> stergeEchipa(@RequestParam(value = "id") String id) {
+        Echipa echipa = echipaRepository.findAllById(id);
         echipaRepository.delete(echipaRepository.findAllById(id));
+        String emailCapitan = echipa.getEmailCapitan();
+        String numeEchipa = echipa.getNumeEchipa();
+        HashMap<String, Integer> hashMap = echipa.getEmailuriParticipant();
+        for (String key : hashMap.keySet()) {
+            Integer value = hashMap.get(key);
+            String newKey = key.replaceAll(",","\\.");
+            ceva.sendMailWithAttachment2(newKey, "Sportify: Echipa stearsa","Echipa " + numeEchipa + " a fost stearsa :(");
+        }
+        ceva.sendMailWithAttachment2(emailCapitan, "Sportify: Echipa stearsa","Echipa " + numeEchipa + " a fost stearsa cu succes!");
         return ResponseEntity.ok().body("echipa stersa");
     }
 
@@ -85,14 +103,19 @@ public class EchipaController {
                                                 ) {
         String emailTemp = email.replaceAll("\\.", ",");
         Echipa echipa = echipaRepository.findAllById(id);
+        String emailCapitan = echipa.getEmailCapitan();
         echipa.getEmailuriParticipant().put(emailTemp, nrMembri);
         if(echipa.getNrMembriActuali() + nrMembri == echipa.getNumarMembriDoriti()) {
             // de trimis email ca echipa este full si la capitan si la celalalt
+            ceva.sendMailWithAttachment2(emailCapitan, "Sportify: Echipa plina","Echipa ta este gata de lupta!");
+            ceva.sendMailWithAttachment2(email, "Sportify: Nu mai sunt locuri in echipa","Cu parere de rau, te anuntam ca echipa la care tocmai ai aplicat nu mai are locuri disponibile.");
             echipa.setNrMembriActuali(echipa.getNrMembriActuali() + nrMembri);
             echipaRepository.save(echipa);
             return ResponseEntity.ok().body("echipa full");
         }
         // de trimis email la amandoi
+        ceva.sendMailWithAttachment2(email, "Sportify: Intrare in echipa", "Felicitari, ati intrat in echipa!");
+        ceva.sendMailWithAttachment2(emailCapitan, "Sportify: Membru nou in echipa", "Felicitari, aveti un membru nou in echipa!");
         echipa.setNrMembriActuali(echipa.getNrMembriActuali() + nrMembri);
         echipaRepository.save(echipa);
         return ResponseEntity.ok().body("adaugat");
@@ -105,6 +128,7 @@ public class EchipaController {
     ) {
         String emailTemp = email.replaceAll("\\.", ",");
         Echipa echipa = echipaRepository.findAllById(id);
+        String emailCapitan = echipa.getEmailCapitan();
         if(email.equals(echipa.getEmailCapitan())) {
             echipaRepository.delete(echipa);
             return ResponseEntity.ok().body("echipa stearsa");
@@ -114,6 +138,8 @@ public class EchipaController {
         echipa.getEmailuriParticipant().remove(emailTemp);
         echipa.setNrMembriActuali(echipa.getNrMembriActuali() - nrMemb);
         echipaRepository.save(echipa);
+        ceva.sendMailWithAttachment2(email, "Sportify: Ati iesit din echipa", "Ati iesit din echipa cu succes.");
+        ceva.sendMailWithAttachment2(emailCapitan, "Sportify: Membru iesit din echipa", "A iesit cineva din echipa.");
         return ResponseEntity.ok().body("substras");
     }
 }
