@@ -42,7 +42,7 @@ public class DocumentsController {
         String id = documentService.addDoc(owner, name, file);
         Documents doc = documentService.getDoc(id);
         emailService.sendMailWithAttachment("badulescucatalin01@gmail.com", "Please verify this ownership proof",
-                "The owner with the username: " + owner + " wants to verify his ownership proof", doc.getFileData().getData(), doc.getName());
+                "The owner with the username: " + owner + " wants to verify his ownership proof", doc.getFileData().getData(), doc.getOwner() + "'s proof");
         return id;
 
         //        MongoCollection<Document> collection = database.getCollection("files");
@@ -56,7 +56,7 @@ public class DocumentsController {
     @GetMapping("/documents/{id}")
     public ResponseEntity<byte[]> getDoc(@PathVariable String id, Model model) {
         Documents doc = documentService.getDoc(id);
-        model.addAttribute("name", doc.getName());
+        model.addAttribute("name", doc.getOwner() + "'s proof");
         model.addAttribute("Owner", doc.getOwner());
         model.addAttribute("fileData",
                 Base64.getEncoder().encodeToString(doc.getFileData().getData()));

@@ -50,4 +50,26 @@ public class EmailService {
             System.err.println(ex.getMessage());
         }
     }
+    public void sendMailWithAttachment2(String to, String subject, String body)
+    {
+        MimeMessagePreparator preparator = new MimeMessagePreparator()
+        {
+            public void prepare(MimeMessage mimeMessage) throws Exception
+            {
+                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+                mimeMessage.setFrom(new InternetAddress("badulescucatalin01@gmail.com"));
+                mimeMessage.setSubject(subject);
+                mimeMessage.setText(body);
+                MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+                helper.setText(body, true);
+            }
+        };
+
+        try {
+            mailSender.send(preparator);
+        }
+        catch (MailException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
 }

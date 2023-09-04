@@ -22,10 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 //@Service
@@ -146,16 +143,20 @@ public class AccountController {
                 // Convert the key to bytes for signing
                 byte[] keyBytes = (new PasswordEncryptorDecryptor().getSecretKeyForSigning()).getBytes();
                 SecretKey secretKey = Keys.hmacShaKeyFor(keyBytes);
+                Map<String, Object> map = new HashMap<>();
+                map.put("role", acc.getRole());
+                map.put("username", acc.getUserName());
 
                 String token = Jwts.builder()
                         .setSubject(email)
-                        .claim("owner/client", acc.getRole())
+                        .addClaims(map)
+                        //.claim("owner/client", acc.getRole())
                         .setExpiration(expirationDate)
                         .signWith(secretKey, SignatureAlgorithm.HS256)
                         .compact();
 
                 // Return the JWT token in the response
-                return ResponseEntity.ok().header("Authorization", "Bearer " + token).body("User logged in successfully");
+                return ResponseEntity.ok().header("Authorization", "Bearer " + token).body(token);
             } else {
                 return ResponseEntity.ok().body("Wrong credentials");
             }

@@ -11,7 +11,6 @@ public class Documents {
     @Id
     private String id;
     private String owner;
-    private String name;
     private Binary fileData;
 
     public String getId() {
@@ -21,15 +20,10 @@ public class Documents {
     public Documents(String owner, String name, Binary fileData) {
         this.fileData = fileData;
         this.owner = owner;
-        this.name = name;
     }
 
     public String getOwner() {
         return owner;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public Binary getFileData() {
